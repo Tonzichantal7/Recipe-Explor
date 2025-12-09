@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1><i class="fas fa-utensils"></i> Recipe Explorer</h1>
+                    <p>Discover delicious recipes from around the world</p>
+                </div>
+                <div id="auth-container" class="auth-container">
+                    <button class="auth-btn" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Search Hero Section -->
+        <section class="search-hero">
+            <div class="search-container">
+                <div class="search-tabs">
+                    <button class="search-tab active" data-type="name">Search by Name</button>
+                    <button class="search-tab" data-type="ingredient">Search by Ingredient</button>
+                    <button class="search-tab" data-type="region">Search by Region</button>
+                    <button class="search-tab" data-type="letter">Browse A-Z</button>
+                </div>
+                
+                <div class="search-input-container">
+                    <input type="text" id="search-input" placeholder="Enter recipe name...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <div id="search-suggestions" class="search-suggestions"></div>
+                
+                <div id="alphabet-filter" class="alphabet-filter">
+                    <span class="letter-instruction">Select a letter to browse recipes:</span>
+                    <div class="letters-container"></div>
+                </div>
+
+                <div id="region-filter" class="region-filter">
+                    <span class="region-instruction">Select a region to browse recipes:</span>
+                    <div class="regions-container">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <button id="random-btn" class="action-btn">
+                    <i class="fas fa-random"></i>
+                    <span>Random Recipe</span>
+                </button>
+                
+                <button id="favorites-btn" class="action-btn">
+                    <i class="fas fa-heart"></i>
+                    <span>My Favorites</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="filter-section">
+            <div class="section-header">
+                <h2>Categories</h2>
+                <button id="toggle-categories" class="toggle-btn">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div id="categories-container" class="categories-container">
+                <div id="categories-spinner" class="loading-spinner"></div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section">
+            <div class="results-header">
+                <h2 id="results-title">Featured Recipes</h2>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="results-container" class="results-container grid-view">
+                <div id="results-spinner" class="loading-spinner"></div>
+            </div>
+            
+            <div id="load-more-container" class="load-more-container">
+                <button id="load-more-btn" class="load-more-btn">
+                    <span>Load More</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Recipe Modal -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="modal-spinner" class="loading-spinner"></div>
+            <div id="modal-content-container"></div>
+        </div>
+    </div>
+
+    <!-- Favorites Drawer -->
+    <div id="favorites-drawer" class="favorites-drawer">
+        <div class="favorites-header">
+            <h2>My Favorite Recipes</h2>
+            <button id="close-favorites">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="favorites-container" class="favorites-container"></div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#" id="footer-random">Random Recipe</a></li>
+                        <li><a href="#" id="footer-favorites">My Favorites</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>About</h3>
+                    <p>Recipe Explorer helps you discover delicious recipes from around the world using TheMealDB API.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Recipe Explorer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content auth-modal-content">
+            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+            <div id="auth-error" class="auth-error"></div>
+            
+            <!-- Login Tab -->
+            <div id="login-tab" class="auth-tab active">
+                <h2>Login to Recipe Explorer</h2>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input type="email" id="login-email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input type="password" id="login-password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">Login</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <button type="button" onclick="switchAuthTab('signup')" class="switch-btn">Sign Up</button></p>
+            </div>
+
+            <!-- Signup Tab -->
+            <div id="signup-tab" class="auth-tab">
+                <h2>Create an Account</h2>
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Name:</label>
+                        <input type="text" id="signup-name" required placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email:</label>
+                        <input type="email" id="signup-email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password:</label>
+                        <input type="password" id="signup-password" required placeholder="At least 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password:</label>
+                        <input type="password" id="signup-confirm" required placeholder="Confirm password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">Sign Up</button>
+                </form>
+                <p class="auth-switch">Already have an account? <button type="button" onclick="switchAuthTab('login')" class="switch-btn">Login</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

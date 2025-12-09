@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Recipe Explorer</title>
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><i class="fas fa-utensils"></i> Recipe Explorer</div>
+            <button id="landing-login-btn" class="nav-btn" onclick="openAuthModal()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Discover Your Next Favorite Recipe</h1>
+            <p>Explore thousands of delicious recipes from around the world</p>
+            <button class="cta-btn" onclick="openAuthModal()">Get Started</button>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Why Choose Recipe Explorer?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400" alt="Search Recipes">
+                    <h3><i class="fas fa-search"></i> Smart Search</h3>
+                    <p>Find recipes by name, ingredient, region, or browse alphabetically</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" alt="Global Cuisine">
+                    <h3><i class="fas fa-globe"></i> Global Cuisine</h3>
+                    <p>Discover authentic recipes from cuisines around the world</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400" alt="Save Favorites">
+                    <h3><i class="fas fa-heart"></i> Save Favorites</h3>
+                    <p>Create your personal collection of favorite recipes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content auth-modal-content">
+            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+            <div id="auth-error" class="auth-error"></div>
+            
+            <div id="login-tab" class="auth-tab active">
+                <h2>Login to Recipe Explorer</h2>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email:</label>
+                        <input type="email" id="login-email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password:</label>
+                        <input type="password" id="login-password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">Login</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <button type="button" onclick="switchAuthTab('signup')" class="switch-btn">Sign Up</button></p>
+            </div>
+
+            <div id="signup-tab" class="auth-tab">
+                <h2>Create an Account</h2>
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signup-name">Name:</label>
+                        <input type="text" id="signup-name" required placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email:</label>
+                        <input type="email" id="signup-email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password:</label>
+                        <input type="password" id="signup-password" required placeholder="At least 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password:</label>
+                        <input type="password" id="signup-confirm" required placeholder="Confirm password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">Sign Up</button>
+                </form>
+                <p class="auth-switch">Already have an account? <button type="button" onclick="switchAuthTab('login')" class="switch-btn">Login</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="landing-auth.js"></script>
+</body>
+</html>
