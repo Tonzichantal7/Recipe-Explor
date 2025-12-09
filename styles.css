@@ -1279,6 +1279,132 @@ footer {
   font-size: 14px;
 }
 
+/* User Dropdown */
+.user-dropdown-container {
+  position: relative;
+}
+
+.user-info-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: var(--transition);
+  color: white;
+}
+
+.user-info-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid white;
+  object-fit: cover;
+}
+
+.user-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.user-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.dropdown-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid var(--primary-color);
+  object-fit: cover;
+}
+
+.dropdown-name {
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 3px;
+}
+
+.dropdown-email {
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--gray-color);
+  margin: 0 10px;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-color);
+  font-size: 15px;
+}
+
+.dropdown-item:hover {
+  background: var(--light-color);
+}
+
+.dropdown-item i {
+  width: 20px;
+  color: var(--primary-color);
+}
+
+.dropdown-item.logout-item {
+  color: #e74c3c;
+  border-top: 1px solid var(--gray-color);
+}
+
+.dropdown-item.logout-item i {
+  color: #e74c3c;
+}
+
+.dropdown-item.logout-item:hover {
+  background: #fee;
+}
+
 /* Profile Modal */
 .profile-image-container {
   text-align: center;

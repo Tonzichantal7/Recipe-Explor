@@ -32,25 +32,117 @@ auth.onAuthStateChanged((user) => {
   console.log('User logged in:', user.email);
 });
 
+async function handleSignup(event) {
+  event.preventDefault();
+  
+  const name = document.getElementById('signup-name').value;
+  const email = document.getElementById('signup-email').value;
+  const password = document.getElementById('signup-password').value;
+  const confirmPassword = document.getElementById('signup-confirm').value;
+  
+  if (password !== confirmPassword) {
+    showAuthError('Passwords do not match!');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showAuthError('Password must be at least 6 characters long!');
+    return;
+  }
+  
+  try {
+    clearAuthError();
+    showAuthLoading(true);
+    
+    // 1. Create user in Authentication
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+    
+    // 2. Update Authentication profile
+    await user.updateProfile({ displayName: name });
+    
+    // 3. Initialize Firestore
+    const db = firebase.firestore();
+    
+    // 4. CREATE THE FIRESTORE USER DOCUMENT
+    await db.collection('users').doc(user.uid).set({
+      uid: user.uid,
+      email: user.email,
+      displayName: name,
+      photoURL: "", // Empty for now
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    console.log('✅ User document created in Firestore');
+    
+    // Continue with your existing code...
+    await auth.signOut();
+    
+    console.log('Signup successful:', email);
+    closeAuthModal();
+    showAuthSuccess('Account created successfully! Please login.');
+    setTimeout(() => openAuthModal(), 1500);
+    
+  } catch (error) {
+    console.error('Signup error:', error);
+    showAuthError(getErrorMessage(error.code));
+  } finally {
+    showAuthLoading(false);
+  }
+}
+
 // Update UI based on auth state
 function updateAuthUI() {
   const authContainer = document.getElementById('auth-container');
   
   if (currentUser) {
     const photoURL = currentUser.photoURL || 'https://via.placeholder.com/40';
+    const displayName = currentUser.displayName || currentUser.email.split('@')[0];
     authContainer.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <button onclick="window.location.href='profile.html'" class="profile-link-btn">
-          <img src="${photoURL}" alt="Profile" class="profile-avatar">
-          <span class="profile-name">${currentUser.displayName || currentUser.email.split('@')[0]}</span>
+      <div class="user-dropdown-container">
+        <button class="user-info-btn" onclick="toggleUserDropdown()">
+          <img src="${photoURL}" alt="Profile" class="user-avatar">
+          <span class="user-name">${displayName}</span>
+          <i class="fas fa-chevron-down"></i>
         </button>
-        <button class="auth-btn" onclick="handleLogout()">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+        <div id="user-dropdown" class="user-dropdown">
+          <div class="dropdown-header">
+            <img src="${photoURL}" alt="Profile" class="dropdown-avatar">
+            <div>
+              <p class="dropdown-name">${displayName}</p>
+              <p class="dropdown-email">${currentUser.email}</p>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" onclick="window.location.href='settings.html'">
+            <i class="fas fa-cog"></i> Settings
+          </button>
+          <button class="dropdown-item logout-item" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
       </div>
     `;
   }
 }
+
+function toggleUserDropdown() {
+  const dropdown = document.getElementById('user-dropdown');
+  dropdown.classList.toggle('show');
+}
+
+window.addEventListener('click', function(event) {
+  if (!event.target.matches('.user-info-btn') && !event.target.closest('.user-info-btn')) {
+    const dropdown = document.getElementById('user-dropdown');
+    if (dropdown && dropdown.classList.contains('show')) {
+      dropdown.classList.remove('show');
+    }
+  }
+});
+
+window.toggleUserDropdown = toggleUserDropdown;
 
 // Open Auth Modal
 function openAuthModal() {

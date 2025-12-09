@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - Recipe Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1><i class="fas fa-utensils"></i> Recipe Explorer</h1>
+                    <p>Profile Settings</p>
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <button class="auth-btn" onclick="window.location.href='index.html'">
+                        <i class="fas fa-home"></i> Home
+                    </button>
+                    <button class="auth-btn" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container settings-main">
+        <div class="settings-container">
+            <h2><i class="fas fa-user-cog"></i> Profile Settings</h2>
+            
+            <div class="settings-section">
+                <h3>Personal Information</h3>
+                <form id="user-info-form">
+                    <div class="form-group">
+                        <label for="user-name">Name:</label>
+                        <input type="text" id="user-name" readonly class="readonly-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">Email:</label>
+                        <input type="email" id="user-email" readonly class="readonly-input">
+                    </div>
+                </form>
+            </div>
+
+            <div class="settings-section">
+                <h3>Change Password</h3>
+                <form id="password-change-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password:</label>
+                        <input type="password" id="current-password" required placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">New Password:</label>
+                        <input type="password" id="new-password" required placeholder="At least 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password:</label>
+                        <input type="password" id="confirm-password" required placeholder="Confirm new password">
+                    </div>
+                    <button type="submit" class="change-password-btn">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </form>
+            </div>
+
+            <div class="settings-section danger-zone">
+                <h3>Danger Zone</h3>
+                <p>Once you delete your account, there is no going back. Please be certain.</p>
+                <button id="delete-account-btn" class="delete-account-btn">
+                    <i class="fas fa-trash-alt"></i> Delete Account
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>

@@ -11,13 +11,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// Prevent back button navigation
 window.history.pushState(null, '', window.location.href);
 window.onpopstate = function() {
   window.history.pushState(null, '', window.location.href);
 };
 
-// Check if user is already logged in
 auth.onAuthStateChanged((user) => {
   if (user) {
     window.location.replace('index.html');
@@ -57,24 +55,47 @@ function switchAuthTab(tab) {
 async function handleLogin(event) {
   event.preventDefault();
   
-  const email = document.getElementById('login-email').value;
+  const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
+  
+  if (!email || !password) {
+    showAuthError('❌ Please enter both email and password');
+    return;
+  }
   
   try {
     clearAuthError();
     showAuthLoading(true);
     
     await auth.signInWithEmailAndPassword(email, password);
-    showAuthSuccess('Login successful!');
+    showAuthSuccess('✅ Login successful!');
     setTimeout(() => window.location.replace('index.html'), 1000);
+    
   } catch (error) {
-    if (error.code === 'auth/user-not-found') {
-      showAuthError('⚠️ You need to create an account before logging in. Please sign up first.');
-      setTimeout(() => switchAuthTab('signup'), 2500);
-    } else if (error.code === 'auth/wrong-password') {
-      showAuthError('Incorrect password. Please try again.');
-    } else {
-      showAuthError(getErrorMessage(error.code));
+    console.error('Login error:', error.code, error.message);
+    
+    switch(error.code) {
+      case 'auth/user-not-found':
+        showAuthError('❌ No account found with this email. Please create an account first.');
+        setTimeout(() => switchAuthTab('signup'), 3000);
+        break;
+      case 'auth/wrong-password':
+        showAuthError('❌ Incorrect password. Please try again.');
+        break;
+      case 'auth/invalid-email':
+        showAuthError('❌ Invalid email format. Please enter a valid email.');
+        break;
+      case 'auth/user-disabled':
+        showAuthError('❌ This account has been disabled.');
+        break;
+      case 'auth/too-many-requests':
+        showAuthError('❌ Too many failed attempts. Please try again later.');
+        break;
+      case 'auth/invalid-login-credentials':
+        showAuthError('❌ Invalid email or password. Please check your credentials and try again.');
+        break;
+      default:
+        showAuthError('❌ Login failed. Please check your email and password.');
     }
   } finally {
     showAuthLoading(false);
@@ -84,18 +105,28 @@ async function handleLogin(event) {
 async function handleSignup(event) {
   event.preventDefault();
   
-  const name = document.getElementById('signup-name').value;
-  const email = document.getElementById('signup-email').value;
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
   const confirmPassword = document.getElementById('signup-confirm').value;
   
+  if (!name) {
+    showAuthError('❌ Please enter your name');
+    return;
+  }
+  
+  if (!email) {
+    showAuthError('❌ Please enter your email');
+    return;
+  }
+  
   if (password !== confirmPassword) {
-    showAuthError('Passwords do not match!');
+    showAuthError('❌ Passwords do not match');
     return;
   }
   
   if (password.length < 6) {
-    showAuthError('Password must be at least 6 characters long!');
+    showAuthError('❌ Password must be at least 6 characters');
     return;
   }
   
@@ -107,10 +138,29 @@ async function handleSignup(event) {
     await userCredential.user.updateProfile({ displayName: name });
     await auth.signOut();
     
-    showAuthSuccess('Account created! Please login.');
+    showAuthSuccess('✅ Account created! Please login.');
     setTimeout(() => switchAuthTab('login'), 1500);
+    
   } catch (error) {
-    showAuthError(getErrorMessage(error.code));
+    console.error('Signup error:', error.code, error.message);
+    
+    switch(error.code) {
+      case 'auth/email-already-in-use':
+        showAuthError('❌ This email is already registered. Please login instead.');
+        setTimeout(() => switchAuthTab('login'), 2000);
+        break;
+      case 'auth/invalid-email':
+        showAuthError('❌ Invalid email format');
+        break;
+      case 'auth/weak-password':
+        showAuthError('❌ Password is too weak. Use at least 6 characters.');
+        break;
+      case 'auth/operation-not-allowed':
+        showAuthError('❌ Email/password accounts are not enabled');
+        break;
+      default:
+        showAuthError('❌ Signup failed: ' + error.message);
+    }
   } finally {
     showAuthLoading(false);
   }
@@ -152,21 +202,6 @@ function showAuthSuccess(message) {
     notification.classList.remove('show');
     setTimeout(() => notification.remove(), 300);
   }, 3000);
-}
-
-function getErrorMessage(errorCode) {
-  const errorMessages = {
-    'auth/invalid-email': 'Invalid email address',
-    'auth/user-disabled': 'This account has been disabled',
-    'auth/user-not-found': 'No account found. Please create an account first',
-    'auth/wrong-password': 'Incorrect password',
-    'auth/email-already-in-use': 'Email is already in use',
-    'auth/weak-password': 'Password is too weak (minimum 6 characters)',
-    'auth/operation-not-allowed': 'Operation not allowed',
-    'auth/too-many-requests': 'Too many failed attempts. Try again later'
-  };
-  
-  return errorMessages[errorCode] || 'An error occurred. Please try again.';
 }
 
 window.addEventListener('click', (event) => {
