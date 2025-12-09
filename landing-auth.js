@@ -11,13 +11,15 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+let isSigningUp = false;
+
 window.history.pushState(null, '', window.location.href);
 window.onpopstate = function() {
   window.history.pushState(null, '', window.location.href);
 };
 
 auth.onAuthStateChanged((user) => {
-  if (user) {
+  if (user && !isSigningUp) {
     window.location.replace('index.html');
   }
 });
@@ -133,12 +135,14 @@ async function handleSignup(event) {
   try {
     clearAuthError();
     showAuthLoading(true);
+    isSigningUp = true;
     
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     await userCredential.user.updateProfile({ displayName: name });
     await auth.signOut();
     
-    showAuthSuccess('✅ Account created! Please login.');
+    isSigningUp = false;
+    showAuthSuccess('✅ Signed up successfully! Please login to get started.');
     setTimeout(() => switchAuthTab('login'), 1500);
     
   } catch (error) {
