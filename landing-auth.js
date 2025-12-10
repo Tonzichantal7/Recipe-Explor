@@ -79,7 +79,6 @@ async function handleLogin(event) {
     switch(error.code) {
       case 'auth/user-not-found':
         showAuthError('❌ No account found with this email. Please create an account first.');
-        setTimeout(() => switchAuthTab('signup'), 3000);
         break;
       case 'auth/wrong-password':
         showAuthError('❌ Incorrect password. Please try again.');
@@ -151,7 +150,6 @@ async function handleSignup(event) {
     switch(error.code) {
       case 'auth/email-already-in-use':
         showAuthError('❌ This email is already registered. Please login instead.');
-        setTimeout(() => switchAuthTab('login'), 2000);
         break;
       case 'auth/invalid-email':
         showAuthError('❌ Invalid email format');
@@ -205,7 +203,7 @@ function showAuthSuccess(message) {
   setTimeout(() => {
     notification.classList.remove('show');
     setTimeout(() => notification.remove(), 300);
-  }, 3000);
+  }, 120000);
 }
 
 window.addEventListener('click', (event) => {
